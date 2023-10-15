@@ -1,0 +1,175 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[slovene]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[nottoc]{tocbibind}
+\usepackage{minted}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{ dsfont }
+\usepackage{siunitx}
+\setlength\parindent{0pt}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\newcommand\myworries[1]{\textcolor{red}{#1}}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\begin{document}
+\begin{titlepage}
+    \begin{center}
+        \includegraphics[]{logo.png}
+        \vspace*{3cm}
+        
+        \Huge
+        \textbf{Naključni sprehodi}
+        
+        \vspace{0.5cm}
+        \large
+        2. naloga pri Matematično-fizikalnem praktikumu
+        
+        \vspace{4.5cm}
+        
+        \textbf{Avtor:} Marko Urbanč (28191096)\ \\
+        \textbf{Predavatelj:} prof. dr. Borut Paul Kerševan\ \\
+        
+        \vspace{2.8cm}
+        
+        \large
+        20.10.2021
+    \end{center}
+\end{titlepage}
+\tableofcontents
+\newpage
+
+\section{Uvod}
+Metode \emph{Monte Carlo} so razred računalniški algoritmov, ki pridejo do numeričnih rezultatov preko naključnega vzorčenja. V fiziki se pogosto uporabljajo za veliko različnih simulacij sistemov kot so kapljevine, celične strukture itd. Sicer pa so v splošnem koristne pri numerični integraciji in modeliranju pojavov, ki imajo veliko nedoločenosti pri vhodnih parametrih (primer izračun rizika pri poslu).\\
+
+Pri naključnemu vzorčenju uporabljamo generatorje psevdonaključnih števil (ang. \emph{Pseudorandom number generator}). Številke, ki nam jih dajo te generatorji, niso resnično naključne. Število je popolnoma določeno z začetnimi vrednostmi generatorja. Običajno sta te začetni vrednosti seed in prejšnja vrednost. Seed pa ima lahko zares naključna števila. Dobimo jih lahko preko vzorčenja raznega termičnega šuma ali podobnih naključnih naravnih pojavov. Ker je potem seed naključen, so tudi števila, ki nam jih da generator, bolj res naključna.
+
+Simuliramo naključne sprehode, kar lahko počnemo na dva načina. Pri prvem, ki ga imenujejo Lévyjev polet oz. \emph{flight}, gledamo da vsak korak traja enako dolgo, medtem ko se hitrost med koraki zelo spreminja. Drugi način pa je Lévyjev sprehod oz. \emph{walk}, kjer imamo hitrost gibanja konstantno, torej koraki različno dolgo časa trajajo. Čas trajanja $i$-tega koraka lahko zapišemo kot
+\begin{gather*}
+    t_i = l_i v
+\end{gather*}
+kjer je $v$ konstantna hitrost gibanja.\\
+Z naključnimi sprehodi simuliramo difuzijo. Zanimivo je opazovati naključne sprehode, pri katerih dovolimo nadpovprečno dolge korake. Verjetnostno gostoto poradelitve zapišemo kot
+\begin{equation}
+\label{eq:1}
+    p(l) \propto l^{-\mu} \>,
+\end{equation}
+kjer je $1<\mu<3$. Tedaj postane drugi moment porazdelitve
+\begin{equation*}
+  \langle l^2\rangle = \int l^2 p(l) \dd l
+\end{equation*}
+neskončen. Govorimo o anomalni difuziji, prisotni pri celi družini kinematičnih distribucij dolžin poti z "debelimi repi".
+
+Pri anomalni difuziji razmazanost (varianca) velike množice
+končnih leg naključnih sprehodov narašča z drugačno potenco časa.
+Velja $\sigma^2(t) \sim t^\gamma$, kjer je
+\begin{align*}
+1 < \mu < 2 \>, &\qquad \gamma = 2 \> &\qquad&  \text{(balistični režim)}\>, \\
+2 < \mu < 3 \>, &\qquad \gamma = 4 - \mu &\qquad&  \text{(super-difuzivni režim)}\>, \\
+    \mu > 3 \>, &\qquad \gamma = 1 &\qquad&  \text{(normalna difuzija)} \>.
+\end{align*}
+Za $\mu=2$ pričakujemo $\sigma^2(t) \sim t^2 / \ln t$,
+za $\mu=3$ pa $\sigma^2(t) \sim t \ln t$
+
+Slika je nekoliko drugačna pri opazovanju naključnih poletov.
+Spet vzamemo zvezo $\sigma^2(t) \sim t^\gamma$ in dobimo odvisnosti
+\begin{align*}
+1 < \mu < 3 \>, &\qquad \gamma = \frac{2}{\mu-1} \> &\qquad&  \text{(super-difuzivni režim)}\>, \\
+    \mu > 3 \>, &\qquad \gamma = 1 &\qquad&  \text{(normalna difuzija)} \>.
+\end{align*}
+Pri $\mu=2$ očitno pričakujemo $\sigma^2(t) \sim t^2 $, torej balistični režim.
+
+\section{Naloga}
+Pri nalogi moramo napraviti računalniško simulacijo dvorasežne hoje za \textbf{polete in sprehode}. Vedno začnemo v izhodišču ($x= y= 0$). Nadaljne lege določimo preko rekurzivne zveze
+\begin{gather*}
+    x_{n+1} = x_n + l\cos{\phi}\>, \\
+    y_{n+1} = y_n + l\sin{\phi}\>,
+\end{gather*}
+kjer je $\phi$ enakomerno naključno porazdeljen na intervalu $[0, 2\pi]$ in $l$, ki je potenčno naključno porazdeljeno število, porazdeljeno v skladu z [\ref{eq:1}]. Narisati moramo nekaj značilnih slik sprehodov za 10, 100, 1000 in 10000 korakov in preveriti, če veljajo prej naštete napovedi za potenco $\gamma$.
+\\
+
+\section{Opis reševanja}
+Problema sem se lotil v Pythonu, kjer sem si veliko pomagal z knjižnicama \texttt{NumPy} in \texttt{SciPy}. Za generacijo naključnega števila $\phi$ sem uporabil z $2\pi$ pomnožen \texttt{np.random.uniform()}. Število $l$ pa sem generiral z \texttt{np.random.pareto()}. Napisal sem si funkciji, ki generirata naključne sprehode in naključne polete. Pri korakih lahko določimo hitrost. Pri poletih pa čas trajanja enega koraka. Seveda lahko izberemo pri obeh število korakov $m$.\\
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{Sprehod_10_100.png}
+    \caption{Značilna sprehoda za $m=10$ in $m=100$}
+    \label{fig:graph1}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{Sprehod_1000.png}
+    \caption{Značilen sprehod za $m=1000$}
+    \label{fig:graph2}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{Sprehod_10000.png}
+    \caption{Značilen sprehoda za $m=10000$}
+    \label{fig:graph3}
+\end{figure}
+\newpage
+Pri večjem številu korakov se jasno vidi, da vseeno obstaja neka možnost, da v enem koraku zelo daleč poskočimo. To je seveda odvisno od $\mu$. Večji kot bo, manj je to verjetno. Narisal sem še nekaj primerov poletov in graf njihove oddaljenosti od izhodišča v odvisnosti od časa, kjer je oddaljenost izračunana preprosto kot
+\begin{gather*}
+    r = \sqrt{x^2 + y^2}\>.
+\end{gather*}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{Examples.png}
+    \caption{Primeri poletov pri $m=500$ in $\mu=2.5$}
+    \label{fig:examples}
+\end{figure}
+\newline
+Nato sem se lotil računanja $\sigma^2$ oddaljenosti od izhodišča. Zaradi težav z konvergenco standardnega načina računanja $\sigma^2$ sem uporabil
+\begin{gather*}
+    \sigma^2 = (\mathrm{MAD}/0.67449)^2
+\end{gather*}
+kjer je MAD "median absolute deviation"
+\begin{gather*}
+    \mathrm{MAD} \equiv \mathrm{median}_i\left( | X_i - \mathrm{median}_j X_j | \right) \>
+\end{gather*}
+in sem ga izračunal s pomočjo vgrajene funkcije v programskem paketu \texttt{SciPy}.\\
+Napisal sem funkcijo, ki izvede več poskusov poletov ali sprehodov. MAD odaljenosti od izhodišča računamo za vse poskuse ob enakem času. Ker se vsi koraki pri poletih zgodijo ob enakem času pri njih ni problema in samo gledamo zaporedne korake. Pri sprehodih pa sem si pomagal z linearno interpolacijo, da sem določil oddaljenosti ob nekih vnaprej določenih časih, za vse poskuse. Na log-log grafu sem potem podatkom prilagodil premico, katere strmina je ravno $\gamma$. To sem naredil s pomočjo funkcije iz \texttt{SciPy}. Za primer kako to deluje sem narisal eno od teh prilagoditev na spodnji sliki [Slika \ref{fig:graph4}].
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{Flight_fit_4-1_2.png}
+    \caption{Primer prileganja premice pri $n=1000$, $m=500$ in $\mu=4.1$}
+    \label{fig:graph4}
+\end{figure}
+Kot pričakovano vrednost $k =\gamma$ res leze proti $1$ (torej smo v režimu normalne difuzije) večje kot imamo število poskusov $n$.
+\newpage
+Zdelo se mi je zanimivo, da bi narisal graf $\gamma(\mu)$ zato sem spisal funkcijo, ki izvede ta postopek prileganja krivulje pri nekemu $\mu$ in si spravi naklon premice na log-log grafu. Dobljene slike bom pokomentiral pri rezultatih.
+\section{Rezultati}
+
+\bibliographystyle{unsrt}
+\bibliography{sources}
+\end{document}
