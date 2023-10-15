@@ -58,7 +58,7 @@ Za še bolj tehnično usmerjene pa obstaja kar se paralelizma tiče še MPI. To 
 Vseeno pa priporočam, da si najprej sam poskusiš rešiti nalogo. As always za vprašanja sem na voljo.
 
 
-* [**Poročilo DN2**]({% link fmf-pdf/year3/mfp/Marko_Urbanč_02.pdf %})
+* [**Poročilo DN2**](https://pengu5055.github.io/fmf-pdf/year3/mfp/Marko_Urbanč_02.pdf)
 * [**Source repozitorij DN2**](https://github.com/pengu5055/mfp02)
 
 Priznam, da zna biti source repozitorij nekoliko kaotičen. Over time sem se naučil boljše prakse. Zdi se mi, da je tole glavni `.py` file.
